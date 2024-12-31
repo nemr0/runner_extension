@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:runner_extension/Data/models/project.dart';
@@ -24,8 +25,10 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     recentProjectLocalSource.delete(recentProject.path);
     getProjects();
   }
-
+  bool adding = false;
   Future<void> add() async {
+    if(adding) return;
+    adding = true;
     try {
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory == null) {
@@ -46,6 +49,8 @@ class ProjectsCubit extends Cubit<ProjectsState> {
       }
     } catch (e) {
       emit(AddProjectError('Not A Flutter/Dart Project!'));
+    } finally {
+      adding = false;
     }
   }
 }

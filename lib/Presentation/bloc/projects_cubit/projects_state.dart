@@ -25,5 +25,5 @@ class AddProjectError extends ProjectsState{
   final String message;
   const AddProjectError (this.message);
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message,UniqueKey().toString()];
 }

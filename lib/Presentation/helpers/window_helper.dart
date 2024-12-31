@@ -50,7 +50,7 @@ class WindowHelper {
       }
       final result = await showCupertinoModalPopup(
           context: navigationKey.currentContext!, builder: builder);
-
+      print(result);
       if (willChangeSize) {
         await Future.delayed(Duration(milliseconds: 300));
         await setSize(currentSize);

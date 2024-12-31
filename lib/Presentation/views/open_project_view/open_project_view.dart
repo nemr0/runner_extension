@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:macos_ui/macos_ui.dart';
@@ -7,6 +8,7 @@ import 'package:runner_extension/Presentation/helpers/window_helper.dart';
 import 'dart:math' as math;
 
 import 'package:runner_extension/Presentation/views/open_project_view/widgets/recent_project_tile.dart';
+import 'package:runner_extension/gen/assets.gen.dart';
 
 class OpenProjectView extends HookWidget {
   const OpenProjectView({super.key});
@@ -53,6 +55,28 @@ class OpenProjectView extends HookWidget {
               builder: (context, state) {
                 final recentProjects =
                     ProjectsCubit.get(context).recentProjects;
+                if (recentProjects.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 60,),
+                        Assets.emptyBox.svg(colorFilter: ColorFilter.mode(MacosTheme.brightnessOf(context)== Brightness.light?MacosColors.black:MacosColors.white, BlendMode.srcIn)),
+                        RichText(
+                            text: TextSpan(
+                                text: 'No Recent Projects, ',
+                                children: [
+                              TextSpan(
+                                  text: 'click here to add a new one.',
+                                  style: TextStyle(color: MacosTheme.of(context).primaryColor),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap =
+                                        () => ProjectsCubit.get(context).add())
+                            ]))
+                      ],
+                    ),
+                  );
+                }
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (ctx, index) {
@@ -62,8 +86,7 @@ class OpenProjectView extends HookWidget {
                       return RecentProjectTile(
                         recentProject: recentProjects[index],
                         onRemove: (recentProject) =>
-                            ProjectsCubit.get(context)
-                                .remove(recentProject),
+                            ProjectsCubit.get(context).remove(recentProject),
                       );
                     },
                     semanticIndexCallback: (Widget widget, int localIndex) {
